@@ -1,0 +1,46 @@
+Monkey
+
+1.针对三种不同的场景编写三条不同的命令，并且说明到底是测试什么场景，什么切入点
+场景一（狂暴）： #执行1000次monkey伪随机操作获得较详细日志信息，seed = 1，未做延迟处理，遇到timeout、crash等异monkey会被停止执行
+      adb shell monkey –p com.audiocn.kalaok –s 1 -v -v -v 1000 >D:\kalaok_report.txt  
+场景二（温柔）：#依然1000次，增加延迟300s，忽略了一些异常信息保障monkey的顺利执行完成
+      adb shell monkey -p com.audiocn.kalaok --throttle 300 -s 2 --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --monitor-native-crashes -v -v -v 1000 >D:\kalaok_report.txt
+
+场景三（高冷有内涵）：#依然1000次，增加延迟300s，指定了touch、motion、trackball操作
+adb shell monkey -p com.audiocn.kalaok --pct-touch 30 --pct-motion 20 --pct-trackball 20 --throttle 300 -s 2 --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --monitor-native-crashes -v -v -v 1000 >/mnt/sdcard/kalaok_report.txt
+问题：上面monkey log怎么不能保存到模拟器存储卡中，保存PC则可以。帮忙指导下。
+
+
+MonkeyRunner
+编写一条MonkeyRunner的测试用例，可以用原生的坐标API，也可以用扩展的ID定位的API
+from com.android.monkeyrunner import MonkeyRunner,MonkeyDevice,MonkeyImage
+device = MonkeyRunner.waitForConnection()
+MonkeyRunner.sleep(3)
+#强制关闭正在运行的app
+device.shell('am force-stop com.audiocn.kalaok')  
+MonkeyRunner.sleep(3)
+#启动app
+device.startActivity(component='com.audiocn.kalaok/com.audiocn.common.activity.WelcomActivity')
+MonkeyRunner.sleep(5)
+#右滑一tab
+device.press('KEYCODE_DPAD_RIGHT','DOWN_AND_UP')
+MonkeyRunner.sleep(2)
+#右滑一tab
+device.press('KEYCODE_DPAD_RIGHT','DOWN_AND_UP')
+MonkeyRunner.sleep(3)
+#拖动列表
+for i in range(1,3):
+	device.drag((250,850),(250,110),0.1,10)
+MonkeyRunner.sleep(3)
+#双击返回键退出app
+device.press('KEYCODE_BACK ','DOWN_AND_UP')
+device.press('KEYCODE_BACK ','DOWN_AND_UP')
+MonkeyRunner.sleep(3)
+result = device.takeSnapshot()
+result.writeToFile('D:\\result1.png','png')
+
+
+
+iOS Monkey
+执行iOS monkey脚本，github上面随便找一个就可以
+还木有mac环境。。。
